@@ -1,0 +1,16 @@
+{
+    "name": "AlephVault.Unity.Scenes.Editor",
+    "references": [
+        "AlephVault.Unity.Scenes.Runtime"
+    ],
+    "optionalUnityReferences": [],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": []
+}
