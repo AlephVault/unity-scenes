@@ -1,5 +1,5 @@
 # unity-scenes
-This project contains fields and utilities related to scenes management.
+This package contains fields and utilities related to scenes management.
 
 # Install
 To install this package you need to open the package manager in your project and:
