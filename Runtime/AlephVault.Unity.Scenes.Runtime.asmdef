@@ -1,14 +1,17 @@
 {
     "name": "AlephVault.Unity.Scenes.Runtime",
+    "rootNamespace": "",
     "references": [
-        "AlephVault.Unity.Support.Runtime"
+        "AlephVault.Unity.Support.Runtime",
+        "AlephVault.Unity.Support.Generic.Runtime"
     ],
-    "optionalUnityReferences": [],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,
     "precompiledReferences": [],
     "autoReferenced": true,
-    "defineConstraints": []
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
 }
