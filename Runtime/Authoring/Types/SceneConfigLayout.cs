@@ -1,9 +1,10 @@
-using AlephVault.Unity.Support.Utils;
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using AlephVault.Unity.Support.Utils;
 
 namespace AlephVault.Unity.Scenes
 {
@@ -19,7 +20,7 @@ namespace AlephVault.Unity.Scenes
             ///   scene), unload a scene, and clear all the
             ///   loaded scenes.
             /// </summary>
-            [System.Serializable]
+            [Serializable]
             public class SceneConfigLayout
             {
                 /// <summary>
@@ -51,6 +52,20 @@ namespace AlephVault.Unity.Scenes
                 ///   The layout's current load status.
                 /// </summary>
                 public LoadStatus Status { get; private set; }
+
+                /// <summary>
+                ///   This event is triggered when the whole layout
+                ///   was just loaded completely (this applies to
+                ///   the singleton instances, and not the template
+                ///   instances).
+                /// </summary>
+                public event Action OnLayoutInitialized = null;
+
+                /// <summary>
+                ///   This event is triggered when the whole layout
+                ///   was just unloaded completely.
+                /// </summary>
+                public event Action OnLayoutTorndown = null;
 
                 public SceneConfigLayout()
                 {
@@ -99,14 +114,26 @@ namespace AlephVault.Unity.Scenes
                 public async Task Initialize()
                 {
                     ExpectAndThen(LoadStatus.Unloaded, LoadStatus.Loading);
-                    foreach(KeyValuePair<string, SceneConfig> pair in scenesMap)
+                    try
                     {
-                        if (pair.Value.LoadMode == SceneLoadMode.Singleton)
+                        foreach (KeyValuePair<string, SceneConfig> pair in scenesMap)
                         {
-                            await pair.Value.Load();
+                            if (pair.Value.LoadMode == SceneLoadMode.Singleton)
+                            {
+                                await pair.Value.Load();
+                            }
                         }
+                        Status = LoadStatus.Loaded;
+                        OnLayoutInitialized?.Invoke();
                     }
-                    Status = LoadStatus.Loaded;
+                    catch (Exception e)
+                    {
+                        foreach (KeyValuePair<string, SceneConfig> pair in scenesMap)
+                        {
+                            await pair.Value.Unload();
+                        }
+                        Status = LoadStatus.Unloaded;
+                    }
                 }
 
                 /// <summary>
@@ -161,6 +188,7 @@ namespace AlephVault.Unity.Scenes
                         while (!operation.isDone) await Tasks.Blink();
                     }
                     Status = LoadStatus.Unloaded;
+                    OnLayoutTorndown?.Invoke();
                 }
             }
         }
