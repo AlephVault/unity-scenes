@@ -54,6 +54,17 @@ namespace AlephVault.Unity.Scenes
                 private Scene sceneInstance;
 
                 /// <summary>
+                ///   Intended only for singleton configurations, tells
+                ///   whether the scene is valid & loaded, or not. This
+                ///   will return false for Template scene configurations.
+                /// </summary>
+                /// <returns>Whether the scene configuration is singleton, AND the scene is valid & loaded</returns>
+                public bool IsLoaded()
+                {
+                    return loadMode == SceneLoadMode.Singleton && sceneInstance.IsValid() && sceneInstance.isLoaded;
+                }
+
+                /// <summary>
                 ///   Attempts to load the scene and returns its
                 ///     reference. If this config uses the singleton
                 ///     mode, and an instance of the scene was already
@@ -68,7 +79,7 @@ namespace AlephVault.Unity.Scenes
                 public async Task<Scene> Load()
                 {
                     // For singletons, if the scene is already loaded, return it.
-                    if (loadMode == SceneLoadMode.Singleton && sceneInstance.IsValid() && sceneInstance.isLoaded)
+                    if (IsLoaded())
                     {
                         return sceneInstance;
                     }
@@ -89,7 +100,7 @@ namespace AlephVault.Unity.Scenes
                 /// </summary>
                 public async Task Unload()
                 {
-                    if (loadMode == SceneLoadMode.Singleton)
+                    if (IsLoaded())
                     {
                         AsyncOperation operation = SceneManager.UnloadSceneAsync(sceneInstance);
                         while (!operation.isDone)
